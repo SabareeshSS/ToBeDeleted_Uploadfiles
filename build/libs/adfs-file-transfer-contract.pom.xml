@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.swacorp.tbs</groupId>
+		<artifactId>tbs-base</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<groupId>com.swacorp.ebs.contracts</groupId>
+	<artifactId>adfs-file-transfer-contract</artifactId>
+	<version>1.0.6</version>
+	<packaging>jar</packaging>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<url>${project.artifactId}</url>
+
+	<scm>
+		<connection>scm:svn:https://svn.swacorp.com/ebs/svn/projects/adfs/contracts/adfs-file-transfer/tags/adfs-file-transfer-contract-R1.0.6_DEV9</connection>
+	</scm>
+
+	<properties>
+		<confluence.parentPage>ADFS File Transfer Service Documentation</confluence.parentPage>
+		<base.namespace>http://ebs.swacorp.com/adfs-file-transfer</base.namespace>
+		<base.package>com.swacorp.ebs.adfs.filetransfer</base.package>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<jdk.version>1.6</jdk.version>
+		<cxf.version>2.6.0</cxf.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.swacorp.tbs.contracts</groupId>
+			<artifactId>tbs-message-information-contracts</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>filter-binding-file</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>target/main/resources</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<configuration>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>target/main/resources/ADFSFileTransfer.wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>target/main/resources/xjc-bindings.xjb</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-verbose</extraarg>
+										<extraarg>-validate</extraarg>
+										<extraarg>-nexclude</extraarg>
+										<extraarg>${messageInformation.namespace}</extraarg>
+										<extraarg>-xjc-Xtbs</extraarg>
+										<extraarg>-xjc-Xdv</extraarg>
+										<extraarg>-p</extraarg>
+										<extraarg>${base.namespace}/v1=${base.package}</extraarg>
+										<extraarg>-p</extraarg>
+										<extraarg>${base.namespace}/wsdl/v1=${base.package}.wsdl</extraarg>
+									</extraargs>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.swacorp.tbs</groupId>
+						<artifactId>tbs-jaxb-plugin</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.cxf.xjcplugins</groupId>
+						<artifactId>cxf-xjc-dv</artifactId>
+						<version>${cxf.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

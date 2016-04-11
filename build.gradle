@@ -1,0 +1,35 @@
+apply plugin: "maven"
+apply plugin: "java"
+
+task copyTask(type: Copy) {
+    from "src/"
+    into "${buildDir}/libs"
+}
+/**
+configurations {
+   deployerJars
+}
+
+  These properties are set in gradle.properties !!!!!!!!!! 
+  If you modify these then jenkins promotions will break !!!!!!!!!!!!
+*/   
+group = artifactGroup
+version = artifactVersion  
+
+afterEvaluate{
+	uploadArchives {
+		repositories.mavenDeployer {
+			def nexusUser = System.getProperties().nexusUsername
+			def nexusPassword = System.getProperties().nexusPassword
+			def nexusServer = System.getProperties().nexusServer+"/content/repositories/CI"
+			repository(url: nexusServer) {
+			 authentication(userName: nexusUser, password: nexusPassword)
+			 }
+			pom.groupId = artifactGroup
+            pom.artifactId = artifactId
+           // pom.version = 1.0.13
+		}
+	}
+}
+
+defaultTasks 'clean', 'copyTask', 'uploadArchives'
