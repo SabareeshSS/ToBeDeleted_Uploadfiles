@@ -1,0 +1,16 @@
+#!/bin/sh
+if tty >/dev/null 2>&1; then
+  TTY=$(tty)
+else
+  TTY=/dev/tty
+fi
+echo "Kindly check whether the commit requires a RTC ID and it is in Fixed state."
+read -n1 -p "Do you want to continue? [Y/N]" doit < "$TTY"
+case $doit in  
+    y*|Y*) echo "Warning ignored!"
+         ;;
+    n*|N*) $EDITOR $1 < "$TTY"
+         ;;
+    *) echo "Alert! Warning ignored!"
+       ;;
+esac
